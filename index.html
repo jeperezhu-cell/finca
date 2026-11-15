@@ -93,20 +93,16 @@ button.pri{background:linear-gradient(90deg,var(--ac),#fb923c)}
 .cc.late{border-left-color:var(--bad)}.cc .nm{font-size:16px}
 .cc:hover{transform:translateX(3px)}
 @media(max-width:899px){header{flex-wrap:wrap}.hinfo{order:9;flex-basis:100%}}
-/* ===== ∫ Página Cálculo ===== */
-.fxs{list-style:none;margin:6px 0 0;padding:0;counter-reset:p}.fxs li{counter-increment:p;margin:6px 0}
-.fxn{display:block;font-size:12px;color:var(--mut)}.fxn:before{content:counter(p)'. ';color:var(--ac);font-weight:700}
-.fxk{padding:6px 0 10px}.fxk>b{color:var(--ac)}
-.fxf{font:italic 16px Georgia,'Times New Roman',serif;background:var(--card2);border-radius:8px;padding:8px 10px;margin:4px 0;line-height:2.1;overflow-x:auto}
-.fxf sub,.fxf sup{font-size:.7em;line-height:0}
-.fxr{margin:8px 0 4px;padding:8px 10px;border-left:3px solid var(--ac);background:var(--card2);border-radius:6px;font:italic 700 17px Georgia,'Times New Roman',serif}
-.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .25em;line-height:1.25;font-size:.95em}
-.fr>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .3em}.fr>span:last-child{padding:0 .3em}
-.fi{display:inline-flex;align-items:center;vertical-align:middle;margin-right:.15em}
-.fi>i{font-style:normal;font-size:2.1em;font-weight:300;line-height:1}
-.fl{display:inline-flex;flex-direction:column;justify-content:space-between;font-size:.62em;line-height:1.1;height:2.9em;margin-left:.1em;text-align:left}
-.cxt{color:var(--mut);font-size:12px;margin:14px 0 2px}.cxr{max-height:260px;overflow:auto}
-.cxok{color:var(--ok);font-size:12px;margin:2px 0 6px}
+
+/* ===== página Cálculo: fórmulas ƒ(x) ===== */
+.fxb{background:transparent;border:1px dashed var(--bd);color:var(--mut);border-radius:8px;padding:4px 10px;font-size:12px;font-style:italic;opacity:.6;margin-top:10px}.fxb:hover,.fxb.on{opacity:1;color:var(--ac);border-color:var(--ac)}
+.fxp{margin-top:8px;background:var(--card2);border:1px solid var(--bd);border-left:4px solid var(--ac);border-radius:10px;padding:10px 12px;font-size:13px;line-height:1.5}.fxp[hidden]{display:none}
+.fxp .ft{font-weight:700;margin-bottom:4px}.fxp .fb{padding:8px 0;border-top:1px dashed var(--bd)}.fxp .fb:first-of-type{border-top:0}
+.tg{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.06em;padding:1px 7px;border-radius:8px}.tg.i{background:#38bdf822;color:#38bdf8}.tg.d{background:#a78bfa22;color:#a78bfa}
+.fm{font-family:Cambria,Georgia,serif;font-size:16px;margin:4px 0}.fm sub{font-size:.7em}.fo{color:var(--mut)}.fx{color:var(--tx)}.fr{font-weight:700;color:var(--ok)}
+.fi{display:inline-flex;align-items:center;font-size:1.5em;line-height:1}.fi i{display:inline-flex;flex-direction:column;font-style:normal;font-size:.45em;line-height:1.1;margin-left:1px}
+.ff{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 3px;font-size:.9em}.ff>span:first-child{border-bottom:1px solid currentColor;padding:0 3px}.ff>span:last-child{padding:0 3px}
+input[type=range]{padding:0;height:28px;accent-color:var(--ac)}
 </style>
 <script>try{document.documentElement.dataset.t=localStorage.getItem('fct')||'dark'}catch(e){document.documentElement.dataset.t='dark'}</script>
 </head>
@@ -147,7 +143,7 @@ const toast=(t,bad)=>{const m=$('#msg');m.textContent=t;m.style.background=bad?'
 async function api(a,x={}){const r=await fetch('/api',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({a,...x})});const j=await r.json().catch(()=>({}));
  if(r.status==401&&a!='login'){showLogin();throw new Error('auth')}if(!r.ok)throw new Error(j.e||'Error');return j}
 async function act(fn){if(busy)return;busy=1;$('#ld').style.display='block';try{await fn()}catch(e){if(e.message!='auth')toast(e.message,1)}finally{busy=0;$('#ld').style.display='none'}}
-const cfgObj=()=>({v:3,emp:D.emp,ruc:D.ruc,mats:D.mats,ral:D.ral,chof:D.chof,sue:D.sue,hext:D.hext,jor:D.jor,maq:D.maq,ctas:D.ctas,cgasto:D.cgasto,dir:D.dir,ser:D.ser,eq:D.eq});
+const cfgObj=()=>({v:3,emp:D.emp,ruc:D.ruc,mats:D.mats,ral:D.ral,chof:D.chof,sue:D.sue,hext:D.hext,jor:D.jor,maq:D.maq,ctas:D.ctas,cgasto:D.cgasto,dir:D.dir,ser:D.ser,eq:D.eq,cmaq:D.cmaq||{}});
 async function load(){const j=await api('all'),sc=(j.cfg||{}).cfg||{},c=Object.assign(clone(def),sc);let mig=false;
  if(!(sc.v>=2)){c.mats=clone(def.mats);c.maq=clone(def.maq);c.emp=sc.emp||def.emp;mig=true}
  if(!(sc.v>=3)){const m=clone(def.ral);(Array.isArray(sc.alq)?sc.alq:[]).filter(o=>o&&typeof o.n=='string'&&o.n&&!('f' in o)&&!('maq' in o)&&isFinite(+o.p)).forEach(o=>{if(!m.find(z=>z.n==o.n))m.push({n:o.n,p:+o.p})});c.ral=m;mig=true}
@@ -188,7 +184,7 @@ let st={mod:'camion',mat:0,q:1,precio:null,chof:0,est:'Pagado',dest:'Casa'},al={
 const PCV=['Vigilancia (cuando viene)','Turno completo','Visita / control','Otro'];
 let af='',gv={sel:[],modo:'cada',mon:'',gal:'',n:'',f:'',c:0};
 const MT=['Cambio de aceite','Filtros','Llantas','Frenos','Batería','Engrase','Soldadura','Mecánica general','Lavado','Repuesto','Otro'];
-const GR=[[null,[['inicio','🏠','Inicio']]],['Ventas',[['venta','🛒','Nueva venta'],['alq','🚜','Alquiler'],['fac','🧾','Facturas'],['cob','💰','Por cobrar']]],['Gastos',[['gas','⛽','Petróleo'],['mant','🔧','Mantenimiento'],['poli','👮','Policía'],['com','🍽','Comidas']]],['Personal',[['asis','🕒','Asistencia'],['pag','👷','Pagos personal']]],['Stock',[['stock','📦','Stock'],['stkreg','✍️','Registrar stock'],['stkadj','🛠','Ajustar stock']]],['Empresa',[['caja','🏦','Caja y saldos'],['ajc','➖','Retirar / Ajustar']]],['Análisis',[['graf','📊','Gráficos'],['calc','∫','Cálculo (integrales)'],['rep','📄','Reportes']]],['Sistema',[['aj','⚙️','Ajustes'],['usr','👥','Roles y usuarios'],['bor','🗑','Borrar datos por mes']]]];
+const GR=[[null,[['inicio','🏠','Inicio']]],['Ventas',[['venta','🛒','Nueva venta'],['alq','🚜','Alquiler'],['fac','🧾','Facturas'],['cob','💰','Por cobrar']]],['Gastos',[['gas','⛽','Petróleo'],['mant','🔧','Mantenimiento'],['poli','👮','Policía'],['com','🍽','Comidas']]],['Personal',[['asis','🕒','Asistencia'],['pag','👷','Pagos personal']]],['Stock',[['stock','📦','Stock'],['stkreg','✍️','Registrar stock'],['stkadj','🛠','Ajustar stock']]],['Empresa',[['caja','🏦','Caja y saldos'],['ajc','➖','Retirar / Ajustar']]],['Análisis',[['graf','📊','Gráficos'],['calc','∫','Cálculo'],['rep','📄','Reportes']]],['Sistema',[['aj','⚙️','Ajustes'],['usr','👥','Roles y usuarios'],['bor','🗑','Borrar datos por mes']]]];
 const TL=Object.fromEntries(GR.flatMap(([,l])=>l).map(([k,i,n])=>[k,[i,n]]));
 const menu=o=>{$('#side').classList.toggle('open',!!o);$('#ov').classList.toggle('open',!!o)};
 const go=k=>{if(k=='cob'&&!cb)cobCli=null;if(k!='bor')bo=bo0();tab=k;menu(0);render();scrollTo(0,0)};
@@ -196,7 +192,7 @@ function render(){$('#nav').innerHTML=GRv().map(([g,l])=>(g?`<div class="gt">${g
  $('#bb').innerHTML=[['inicio','🏠','Inicio'],['venta','🛒','Venta'],['alq','🚜','Alquiler'],['cob','💰','Cobrar'],['stkreg','✍️','Stock']].filter(([k])=>can(k)).slice(0,4).map(([k,i,n])=>`<button class="bi ${k==tab?'on':''}" onclick="go('${k}')"><span>${i}</span>${n}</button>`).join('')+`<button class="bi" onclick="menu(1)"><span>☰</span>Menú</button>`;
  $('#br').textContent=D.emp||'FINCA CHATE';$('#pt').textContent=TL[tab][0]+' '+TL[tab][1];
  reloj();thmI();hinfo();$('#mes').style.display=can('inicio')?'':'none';$('#mes').value=MES;$('#v').innerHTML=(MES!=MESACT()?`<div class="card" style="border-color:var(--ac)">📅 Estás viendo <b>${mesN()}</b>. Lo que registres ahora se guarda en <b>el mes actual</b>. <button class="sm" style="margin-left:6px" onclick="setMes(MESACT())">Ir al mes actual</button></div>`:'')+(can(tab)?V[tab]():'<div class="card">No tienes permiso para esta sección.</div>');
- if(tab=='rep')rep();if(tab=='asis'&&av=='hoy')D.asis.filter(a=>a.f==HOY).forEach(a=>calc(a.id))}
+ if(tab=='rep')rep();if(tab=='calc')cAll();if(tab=='asis'&&av=='hoy')D.asis.filter(a=>a.f==HOY).forEach(a=>calc(a.id))}
 const rec=()=>{const L=[];TIPOS.forEach(t=>D[t].forEach(x=>{if(x.f.startsWith(MES))L.push([t,x])}));return L.sort((a,b)=>b[1]._o-a[1]._o).slice(0,8)};
 const dsc=(t,x)=>({ventas:`Venta · ${x.mat} · ${cant(x)} · ${S(x.tot)}`,alq:`Alquiler · ${x.maq} · ${x.hr} h · ${S(x.tot)}`,abo:`Cobro · ${x.cli} · ${S(x.mon)}`,gas:`Petróleo · ${x.m} · ${S(x.mon)}`,mant:`Mantenimiento · ${x.m} · ${x.t} · ${S(x.mon)}`,poli:`Policía · ${x.con} · ${S(x.mon)}`,com:`${x.t} · ${x.c} · ${S(x.mon)}`,asis:`Asistencia · ${x.c} · entró ${x.e}`,pagos:`Pago ${x.t} · ${x.c} · ${S(x.mon)}`,fac:`Factura ${fnum(x)} · ${S(x.tot)}`,caja:`Caja · ${x.mot} · ${x.cta} · ${x.sg>0?'+':'−'}${S(x.mon)}`,stk:`Stock · ${x.mat} · ${x.sg<0?'−':'+'}${x.q} ${x.u} · ${x.by}`}[t]);
 const cls=()=>[...new Set([...D.ventas,...D.alq].map(x=>x.cli).filter(Boolean))];
@@ -208,7 +204,7 @@ const tg=(id,k,l,on)=>`<button class="sm ${on?'on':''}" id="${k}${id}" onclick="
 const on=id=>$('#'+id).classList.contains('on');
 const V={
 inicio(){const k=kp(datos(MES+'-01',ult(MES))),vh=[...D.ventas,...D.alq].filter(v=>v.f==HOY&&!v.anu),pres=D.asis.filter(a=>a.f==HOY),falta=D.chof.filter(c=>!pres.find(a=>a.c==c)),dd=deudas(),gt=k.gas+k.mant+k.poli+k.com+k.sue+k.ade+k.hep;
-const hoyOn=MES==MESACT();return `${cxBtn()}${cajaCard()}${hoyOn?'':'<div class="card"><h3>Hoy</h3><div class="mut">Estás viendo otro mes: aquí solo se muestra lo del mes elegido.</div></div>'}<div class="card" style="${hoyOn?'':'display:none'}"><h3>Hoy</h3><div class="kp"><div><small>Vendido hoy</small><b>${S(sum(vh,v=>v.tot))}</b></div><div><small>Cobrado hoy</small><b>${S(sum(cash().filter(r=>r.f==HOY),x=>x.m))}</b></div><div><small>Camiones hoy</small><b>${sum(D.ventas.filter(v=>v.f==HOY&&!v.anu&&v.mod!='cubico'),v=>v.q)}</b></div><div><small>Por cobrar (total)</small><b>${S(sum(dd,x=>x.sal))}</b></div><div><small>Presentes hoy</small><b>${pres.length}/${D.chof.length}</b></div></div>
+const hoyOn=MES==MESACT();return `${cajaCard()}${hoyOn?'':'<div class="card"><h3>Hoy</h3><div class="mut">Estás viendo otro mes: aquí solo se muestra lo del mes elegido.</div></div>'}<div class="card" style="${hoyOn?'':'display:none'}"><h3>Hoy</h3><div class="kp"><div><small>Vendido hoy</small><b>${S(sum(vh,v=>v.tot))}</b></div><div><small>Cobrado hoy</small><b>${S(sum(cash().filter(r=>r.f==HOY),x=>x.m))}</b></div><div><small>Camiones hoy</small><b>${sum(D.ventas.filter(v=>v.f==HOY&&!v.anu&&v.mod!='cubico'),v=>v.q)}</b></div><div><small>Por cobrar (total)</small><b>${S(sum(dd,x=>x.sal))}</b></div><div><small>Presentes hoy</small><b>${pres.length}/${D.chof.length}</b></div></div>
 ${falta.length?`<div class="mut" style="margin-top:10px">Sin asistencia hoy: ${falta.map(E).join(', ')}</div>`:''}</div>
 <div class="card"><h3>Resumen de ${mesN()}</h3><div class="kp"><div><small>Total vendido</small><b>${S(k.vend)}</b></div><div><small>Dinero cobrado</small><b>${S(k.cob)}</b></div><div><small>Gastos</small><b>${S(gt)}</b></div><div><small>Utilidad aprox.</small><b style="color:${k.ut>=0?'var(--ok)':'var(--bad)'}">${S(k.ut)}</b></div></div></div>
 ${dd.length?`<div class="card"><h3>⚠ Deudas más antiguas</h3><div class="wrap"><table><tr><th>Cliente</th><th>Debe</th><th>Hace</th></tr>${dd.slice(0,5).map(x=>`<tr><td>${E(x.cli)}</td><td>${S(x.sal)}</td><td>${diasC(x.dias)}</td></tr>`).join('')}</table></div><button class="sm" style="margin-top:8px" onclick="go('cob')">Ver todas</button></div>`:''}
@@ -794,159 +790,152 @@ show('t0')})();`;
 <div class="tb">${tabs.map(([i,n])=>`<button data-t="${i}">${n}</button>`).join('')}</div>
 <main>${tabs.map(([i])=>`<section class="pn" id="${i}">${P[i]}</section>`).join('')}</main><div id="lb"><img alt=""></div><script>${js}<\/script></body></html>`}
 
-// =====================================================================
-// ∫ PÁGINA "CÁLCULO" — SOLO INTEGRALES (todo con tus registros reales)
-// Cada sección: función → integral definida → antiderivada/suma de Riemann
-//               → sustitución con tus números → resultado → gráfico.
-// =====================================================================
-const N2=v=>(+v||0).toLocaleString('es-PE',{minimumFractionDigits:2,maximumFractionDigits:2});
-const cxMas=(f,n)=>{const t=new Date(f+'T12:00:00');t.setDate(t.getDate()+n);return t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')+'-'+String(t.getDate()).padStart(2,'0')};
-const cxDiasT=()=>{const L=[],u=ult(MES),tope=MES==MESACT()?HOY:u;for(let d=MES+'-01',i=0;d<=tope&&i<40;d=cxMas(d,1),i++)L.push(d);return L};
-const cxSer=(items,L)=>{const ix={};L.forEach((d,i)=>ix[d]=i);const v=L.map(()=>0);items.forEach(it=>{const i=ix[it.f];if(i!=null)v[i]+=it.m});return v.map(x=>Math.round(x*100)/100)};
-const cxAcc=v=>{let s=0;return v.map(x=>Math.round((s+=x)*100)/100)};
-const hd=x=>{const p=String(x||'0').split(':').map(Number);return(p[0]||0)+(p[1]||0)/60+(p[2]||0)/3600};
-const INT=(a,b,f,d)=>`<span class="fi"><i>∫</i><span class="fl"><span>${b}</span><span>${a}</span></span></span> ${f} d${d}`;
-const fxS=(t,pasos,res,nota)=>`<div class="fxk"><b>${t}</b><ol class="fxs">${pasos.map(p=>`<li><span class="fxn">${p[0]}</span><div class="fxf">${p[1]}</div></li>`).join('')}</ol>${res?`<div class="fxr">${res}</div>`:''}${nota?`<small class="mut">${nota}</small>`:''}</div>`;
-const cxOk=(c,t)=>c?`<div class="cxok">✓ ${t}</div>`:'';
-
-// ---- gráficos SVG: el área sombreada ES la integral
-function cxArea(pts,o={}){
-  const W=640,H=210,L=58,R=14,T=14,B=28,xs=pts.map(p=>p[0]),ys=pts.map(p=>p[1]),
-  x0=o.x0??Math.min(...xs),x1=o.x1??Math.max(...xs),ym=Math.max(...ys,0),yn=Math.min(...ys,0),rg=(ym-yn)||1,xr=(x1-x0)||1,
-  X=v=>L+(v-x0)/xr*(W-L-R),Y=v=>T+(H-T-B)*(1-(v-yn)/rg),yf=o.yf||(v=>Math.abs(v)>=100?Math.round(v).toLocaleString('es-PE'):String(+v.toFixed(1)));
-  const g=[0,1,2,3,4].map(k=>{const v=yn+rg*k/4,y=Y(v).toFixed(1);return `<line x1="${L}" x2="${W-R}" y1="${y}" y2="${y}" style="stroke:var(--bd)"/><text x="${L-6}" y="${(+y+4).toFixed(1)}" text-anchor="end" style="fill:var(--mut);font-size:10px">${yf(v)}</text>`}).join('');
-  const xt=(o.xt||[]).map(([v,l])=>`<text x="${X(v).toFixed(1)}" y="${H-8}" text-anchor="middle" style="fill:var(--mut);font-size:10px">${l}</text>`).join('');
-  const P=pts.map(p=>X(p[0]).toFixed(1)+','+Y(p[1]).toFixed(1)).join(' '),y0=Y(0).toFixed(1);
-  const area=`${X(pts[0][0]).toFixed(1)},${y0} ${P} ${X(pts[pts.length-1][0]).toFixed(1)},${y0}`;
-  const dots=o.dl?pts.map(p=>`<circle cx="${X(p[0]).toFixed(1)}" cy="${Y(p[1]).toFixed(1)}" r="3.5" style="fill:var(--ac)"><title>${o.dl(p)}</title></circle>`).join(''):'';
-  return `<svg viewBox="0 0 ${W} ${H}" role="img" style="width:100%;height:auto;display:block">${g}<polygon points="${area}" style="fill:var(--ac);opacity:.25"/><polyline points="${P}" style="fill:none;stroke:var(--ac);stroke-width:2.5"/>${dots}${xt}</svg>`}
-function cxBarras(vals,labels){
-  const n=vals.length,W=640,H=190,L=58,R=14,T=14,B=28,mx=Math.max(...vals,1),mn=Math.min(...vals,0),rg=(mx-mn)||1,bw=(W-L-R)/Math.max(n,1),Y=v=>T+(H-T-B)*(1-(v-mn)/rg),y0=Y(0),tk=Math.max(1,Math.ceil(n/10));
-  const g=[0,1,2,3,4].map(k=>{const v=mn+rg*k/4,y=Y(v).toFixed(1);return `<line x1="${L}" x2="${W-R}" y1="${y}" y2="${y}" style="stroke:var(--bd)"/><text x="${L-6}" y="${(+y+4).toFixed(1)}" text-anchor="end" style="fill:var(--mut);font-size:10px">${Math.round(v).toLocaleString('es-PE')}</text>`}).join('');
-  const b=vals.map((v,i)=>`<rect x="${(L+bw*i+1).toFixed(1)}" y="${Math.min(Y(v),y0).toFixed(1)}" width="${Math.max(bw-2,1).toFixed(1)}" height="${Math.max(Math.abs(Y(v)-y0),v?1:0).toFixed(1)}" style="fill:var(--ac);opacity:.55;stroke:var(--ac)"><title>día ${labels[i]}: ${S(v)}</title></rect>`).join('');
-  const xl=labels.map((t,i)=>i%tk==0||i==n-1?`<text x="${(L+bw*i+bw/2).toFixed(1)}" y="${H-8}" text-anchor="middle" style="fill:var(--mut);font-size:10px">${t}</text>`:'').join('');
-  return `<svg viewBox="0 0 ${W} ${H}" role="img" style="width:100%;height:auto;display:block">${g}${b}${xl}</svg>`}
-const cxTicks=n=>{const k=Math.max(1,Math.ceil(n/8)),t=[];for(let i=0;i<=n;i+=k)t.push([i,i]);if(t[t.length-1][0]!=n)t.push([n,n]);return t};
-const cxTabla=(cab,filas)=>`<div class="wrap cxr"><table><tr>${cab.map(c=>`<th>${c}</th>`).join('')}</tr>${filas.map(r=>`<tr>${r.map((c,i)=>`<td class="${i?'mn':''}">${c}</td>`).join('')}</tr>`).join('')}</table></div>`;
-const cxCap=t=>`<div class="cxt">${t}</div>`;
-const cxCard=(tit,sub,...partes)=>`<div class="card cx"><h3>${tit}</h3>${sub?`<div class="mut" style="margin-bottom:6px">${sub}</div>`:''}${partes.join('')}</div>`;
-
-// ---- estado de la página
-let cq={s:'ventas',c:0,d:0,m:0,v:0,a:0};
-const cxSel=(id,arr,i,fn)=>`<select onchange="${fn}">${arr.map((t,k)=>`<option value="${k}" ${k==i?'selected':''}>${E(t)}</option>`).join('')}</select>`;
-const cxBtn=()=>can('calc')?`<button class="sec" style="width:100%;margin-top:10px" onclick="go('calc')">∫ Cálculo · integrales de tu negocio</button>`:'';
-
+// ================= NUEVO: PÁGINA CÁLCULO · integrales y derivadas con tus datos reales =================
+const addD=(f,n)=>{const d=new Date(f+'T12:00:00');d.setDate(d.getDate()+n);return d.toISOString().slice(0,10)};
+const dd2=(a,b)=>Math.round((new Date(b+'T12:00:00')-new Date(a+'T12:00:00'))/864e5);
 const CALC={
-// 1) VENTAS ACUMULADAS DEL MES ------------------------------------------------
-ventas(){const L=cxDiasT(),N=L.length,it=[...D.ventas,...D.alq].filter(x=>!x.anu).map(x=>({f:x.f,m:x.tot})),v=cxSer(it,L),F=cxAcc(v),T=F[N-1]||0,vm=N?T/N:0,lb=L.map(d=>d.slice(8)),
-  ref=kp(datos(MES+'-01',ult(MES))).vend;
-  return cxCard('∫ Ventas acumuladas de '+mesN(),'¿Cuánto se vendió en total? Es el área bajo la curva de ventas por día.',
-  fxS('Integral definida',[
-   ['Función (dato real de cada día)',`v(τ) = ventas del día τ &nbsp;[S/ por día] &nbsp;, τ = 1 … ${N}`],
-   ['Planteo la integral de 0 a '+N+' días',`V = ${INT('0',N,'v(τ)','τ')}`],
-   ['v se conoce día por día → suma de Riemann (Δτ = 1 día)',`V ≈ Σ<sub>i=1</sub><sup>${N}</sup> v(τ<sub>i</sub>)·Δτ`],
-   ['Sustituyo los valores de la tabla',`V ≈ ${v.map(x=>N2(x)).join(' + ')}`]],`V = ${S(T)}`),
-  cxOk(Math.abs(ref-T)<0.01,'Coincide con el "Total vendido" de Inicio.'),
-  fxS('Valor medio de la función',[
-   ['Teorema del valor medio para integrales',`v̄ = <span class="fr"><span>1</span><span>b − a</span></span> ${INT('a','b','v(τ)','τ')}`],
-   ['Sustituyo',`v̄ = <span class="fr"><span>1</span><span>${N}</span></span> · ${N2(T)}`]],`v̄ = ${S(vm)} por día`,'Es la venta diaria promedio del mes.'),
-  cxCap('Rectángulos de Riemann: cada barra tiene área v(τᵢ)·Δτ = lo vendido ese día'),cxBarras(v,lb),
-  cxCap('Acumulado V(t): el área bajo v(τ) hasta el día t'),cxArea([[0,0],...F.map((y,i)=>[i+1,y])],{x0:0,x1:Math.max(N,1),xt:cxTicks(N),dl:p=>`día ${p[0]}: ${S(p[1])}`}),
-  cxCap('Datos usados'),cxTabla(['Día','v(τ)','V(t) acumulado'],L.map((d,i)=>[fd(d),S(v[i]),S(F[i])])))},
-// 2) SALDO DE CAJA -----------------------------------------------------------------
-caja(){const L=cxDiasT(),N=L.length,M=mov(),m0=MES+'-01',S0=sumo(bal(M,r=>r.f<m0)),mm=M.filter(r=>!r.anu&&L.includes(r.f)),f=cxSer(mm.map(r=>({f:r.f,m:r.m})),L),F=cxAcc(f),
-  ent=sum(mm.filter(r=>r.m>0),r=>r.m),sal=sum(mm.filter(r=>r.m<0),r=>-r.m),Sf=Math.round((S0+(F[N-1]||0))*100)/100,real=sumo(bal(M,r=>r.f<=L[N-1]));
-  return cxCard('∫ Saldo de caja de '+mesN(),'El saldo es el saldo inicial más la integral del flujo neto (entradas − salidas).',
-  fxS('Integral definida',[
-   ['Función (flujo neto de cada día)',`f(τ) = entradas − salidas del día τ &nbsp;[S/ por día]`],
-   ['Saldo = saldo inicial + integral de 0 a '+N,`S(t) = S₀ + ${INT('0',N,'f(τ)','τ')}`],
-   ['Suma de Riemann (Δτ = 1 día)',`S ≈ S₀ + Σ<sub>i=1</sub><sup>${N}</sup> f(τ<sub>i</sub>)·Δτ`],
-   ['Separo la integral en entradas y salidas',`${INT('0',N,'f(τ)','τ')} = ${INT('0',N,'entradas','τ')} − ${INT('0',N,'salidas','τ')}`],
-   ['Sustituyo',`S ≈ ${N2(S0)} + (${N2(ent)} − ${N2(sal)})`]],`S(${N}) = ${S(Sf)}`),
-  cxOk(Math.abs(Sf-real)<0.01,'Coincide con el saldo total de tus cuentas.'),
-  cxCap('Saldo S(t) = S₀ + ∫ f dτ'),cxArea([[0,S0],...F.map((y,i)=>[i+1,S0+y])],{x0:0,x1:Math.max(N,1),xt:cxTicks(N),dl:p=>`día ${p[0]}: ${S(p[1])}`}),
-  cxCap('Flujo neto por día f(τ) (rectángulos de Riemann)'),cxBarras(f,L.map(d=>d.slice(8))),
-  cxCap('Datos usados'),cxTabla(['Día','f(τ) flujo','S(t) saldo'],L.map((d,i)=>[fd(d),S(f[i]),S(S0+F[i])])))},
-// 3) HORAS TRABAJADAS (ASISTENCIA) --------------------------------------------
-asis(){const nom=D.chof,c=nom[cq.c]||nom[0];if(!c)return cxCard('∫ Horas trabajadas','',`<div class="mut">No hay trabajadores registrados.</div>`);
-  const rows=D.asis.filter(a=>a.c==c&&a.f.startsWith(MES)&&a.s).sort((a,b)=>a.f<b.f?-1:1),sel=Math.min(cq.d,Math.max(rows.length-1,0)),a=rows[sel],
-  H=sum(rows,hrs),he=sum(D.asis.filter(x=>x.c==c&&x.f.startsWith(MES)),x=>+x.h||0);
-  const hdr=`<label>Trabajador</label>${cxSel('c',nom,cq.c,"cq.c=this.value*1;cq.d=0;render()")}`;
-  if(!a)return cxCard('∫ Horas trabajadas de '+mesN(),'',hdr,`<div class="mut" style="margin-top:8px">${E(c)} no tiene jornadas completas (con salida) en este mes.</div>`);
-  const ed=hd(a.e);let sd=hd(a.s);if(sd<ed)sd+=24;const w=sd-ed,ex=Math.max(0,w-D.jor),pts=[[0,0],[ed,0],[ed,1],[sd,1],[sd,0],[Math.max(24,sd),0]];
-  return cxCard('∫ Horas trabajadas de '+mesN(),'Las horas son el área bajo la función de presencia: vale 1 mientras el trabajador está en turno.',hdr,
-  `<label>Día a desarrollar</label>`+cxSel('d',rows.map(r=>fd(r.f)+' · '+t8(r.e)+' → '+t8(r.s)),sel,"cq.d=this.value*1;render()"),
-  fxS('Integral de un día: '+fd(a.f),[
-   ['Función de presencia',`φ(t) = 1 si está en turno &nbsp;, &nbsp; 0 si no`],
-   ['Integral definida de la entrada a la salida',`H = ${INT('e','s','φ(t)','t')} = ${INT(N2(ed),N2(sd),'1','t')}`],
-   ['Antiderivada (regla ∫1 dt = t)',`H = [ t ]<sub>${N2(ed)}</sub><sup>${N2(sd)}</sup>`],
-   ['Teorema fundamental: F(b) − F(a)',`H = ${N2(sd)} − ${N2(ed)}`]],`H = ${N2(w)} h (${hms(w)})`),
-  fxS('Horas extra del día (jornada J = '+D.jor+' h)',[
-   ['Integral desde e + J hasta s',`E = ${INT(N2(ed)+' + '+D.jor,N2(sd),'1','t')} = [ t ]`],
-   ['Sustituyo',`E = ${N2(sd)} − (${N2(ed)} + ${D.jor}) = ${N2(sd-ed-D.jor)}`],
-   ['Solo cuenta si es positivo',`E = máx(0 , ${N2(sd-ed-D.jor)})`]],`E = ${N2(ex)} h`),
-  cxCap('φ(t): el área sombreada son las horas trabajadas (eje: hora del día)'),
-  cxArea(pts,{x0:0,x1:24,xt:[0,3,6,9,12,15,18,21,24].map(h=>[h,h+'h']),yf:v=>v==0||v==1?String(v):'',dl:p=>p[0]+' h'}),
-  fxS('Integral del mes completo',[
-   ['Suma de las integrales de cada jornada',`H = Σ ${INT('e<sub>i</sub>','s<sub>i</sub>','φ(t)','t')} = Σ (s<sub>i</sub> − e<sub>i</sub>)`],
-   ['Sustituyo (tabla de abajo)',`H = ${rows.map(r=>N2(hrs(r))).join(' + ')}`]],`H = ${N2(H)} h (${hms(H)}) en ${rows.length} jornadas`),
-  fxS('Pago de horas extra',[
-   ['Función (tarifa por hora extra)',`t(h) = ${N2(D.hext)} &nbsp;[S/ por hora]`],
-   ['Integral de 0 a las horas extra registradas',`P = ${INT('0',N2(he),N2(D.hext),'h')}`],
-   ['Antiderivada (regla ∫k dh = k·h)',`P = [ ${N2(D.hext)}·h ]<sub>0</sub><sup>${N2(he)}</sup>`],
-   ['Sustituyo y opero',`P = ${N2(D.hext)}·${N2(he)} − ${N2(D.hext)}·0`]],`P = ${S(he*D.hext)}`),
-  cxCap('Datos usados'),cxTabla(['Fecha','Entrada','Salida','∫ₑˢ dt (h)'],rows.map(r=>[fd(r.f),t8(r.e),t8(r.s),N2(hrs(r))])))},
-// 4) STOCK ------------------------------------------------------------------------
-stock(){const L=cxDiasT(),N=L.length,mats=D.mats.map(m=>m.n),m=D.mats[cq.m]||D.mats[0];if(!m)return cxCard('∫ Stock','',`<div class="mut">No hay materiales.</div>`);
-  const m0=MES+'-01',ing=r=>(r.sg<0?-1:1)*r.m3,S0=Math.round((sum(D.stk.filter(r=>!r.anu&&r.mat==m.n&&r.f<m0),ing)-sum(D.ventas.filter(x=>!x.anu&&x.mat==m.n&&x.f<m0),m3v))*100)/100,
-  e=cxSer(D.stk.filter(r=>!r.anu&&r.mat==m.n).map(r=>({f:r.f,m:ing(r)})),L),c=cxSer(D.ventas.filter(x=>!x.anu&&x.mat==m.n).map(x=>({f:x.f,m:m3v(x)})),L),fl=e.map((x,i)=>x-c[i]),F=cxAcc(fl),
-  Se=sum(e,x=>x),Sc=sum(c,x=>x),Sf=Math.round((S0+(F[N-1]||0))*100)/100,real=stockOf()[cq.m]?stockOf()[cq.m].m3:null;
-  return cxCard('∫ Stock de '+mesN(),'El stock es el stock inicial más la integral de (lo que entra − lo que sale).',
-  `<label>Material</label>`+cxSel('m',mats,cq.m,"cq.m=this.value*1;render()"),
-  fxS('Integral definida — '+E(m.n),[
-   ['Funciones (datos reales, m³ por día)',`e(τ) = entra &nbsp;, &nbsp; c(τ) = sale (ventas)`],
-   ['Stock = inicial + integral de 0 a '+N,`S(t) = S₀ + ${INT('0',N,'[ e(τ) − c(τ) ]','τ')}`],
-   ['Suma de Riemann (Δτ = 1 día)',`S ≈ S₀ + Σ<sub>i=1</sub><sup>${N}</sup> [ e(τ<sub>i</sub>) − c(τ<sub>i</sub>) ]·Δτ`],
-   ['Separo en dos integrales',`S = S₀ + ${INT('0',N,'e(τ)','τ')} − ${INT('0',N,'c(τ)','τ')}`],
-   ['Sustituyo',`S ≈ ${N2(S0)} + ${N2(Se)} − ${N2(Sc)}`]],`S(${N}) = ${N2(Sf)} m³ (${N2(Sf/D.eq.volq)} volquetes)`),
-  cxOk(MES==MESACT()&&real!=null&&Math.abs(Sf-real)<0.01,'Coincide con el stock actual de la pantalla Stock.'),
-  cxCap('Stock S(t) en m³'),cxArea([[0,S0],...F.map((y,i)=>[i+1,S0+y])],{x0:0,x1:Math.max(N,1),xt:cxTicks(N),dl:p=>`día ${p[0]}: ${N2(p[1])} m³`}),
-  cxCap('Datos usados'),cxTabla(['Día','e(τ) entra','c(τ) sale','S(t) m³'],L.map((d,i)=>[fd(d),N2(e[i]),N2(c[i]),N2(S0+F[i])])))},
-// 5) UNA VENTA ---------------------------------------------------------------------
-venta(){const ls=[...D.ventas].filter(x=>!x.anu).reverse().slice(0,40);if(!ls.length)return cxCard('∫ Total de una venta','',`<div class="mut">Aún no hay ventas.</div>`);
-  const x=ls[Math.min(cq.v,ls.length-1)],q=+x.q||0,p=+x.p||0,u=x.mod=='cubico'?'cúbico':'camión',k=x.mod=='cubico'?1:D.eq.volq;
-  return cxCard('∫ Total de una venta','El total es el área bajo el precio p(q) entre 0 y la cantidad vendida.',
-  `<label>Venta</label>`+cxSel('v',ls.map(r=>fd(r.f)+' · '+r.mat+' · '+cant(r)+' · '+S(r.tot)),Math.min(cq.v,ls.length-1),"cq.v=this.value*1;render()"),
-  fxS('Integral definida — total',[
-   ['Función (precio por '+u+')',`p(q) = ${N2(p)} &nbsp;[S/ por ${u}]`],
-   ['Integral definida de 0 a q',`T = ${INT('0','q','p(q)','q')} = ${INT('0',N2(q),N2(p),'q')}`],
-   ['Antiderivada (regla ∫k dq = k·q)',`F(q) = ${N2(p)}·q`],
-   ['Teorema fundamental: F(b) − F(a)',`T = F(${N2(q)}) − F(0)`],
-   ['Sustituyo y opero',`T = ${N2(p)}·${N2(q)} − ${N2(p)}·0 = ${N2(p*q)}`]],`T = ${S(p*q)}`),
-  cxOk(Math.abs(p*q-x.tot)<0.01,'Coincide con el total registrado de la venta.'),
-  fxS('Integral definida — m³ que salen del stock',[
-   ['Función (m³ por '+u+')',`k = ${N2(k)}`],
-   ['Integral de 0 a q',`M = ${INT('0',N2(q),N2(k),'q')} = [ ${N2(k)}·q ]<sub>0</sub><sup>${N2(q)}</sup>`],
-   ['Sustituyo y opero',`M = ${N2(k)}·${N2(q)} − 0`]],`M = ${N2(k*q)} m³`),
-  cxCap('p(q): el área sombreada (rectángulo) es el total de la venta'),
-  cxArea([[0,0],[0,p],[q||1,p],[q||1,0]],{x0:0,x1:q||1,xt:[[0,'0'],[q||1,N2(q)+' '+u]],dl:pt=>'p = '+N2(p)}))},
-// 6) UN ALQUILER -------------------------------------------------------------------
-alq(){const ls=[...D.alq].filter(x=>!x.anu).reverse().slice(0,40);if(!ls.length)return cxCard('∫ Total de un alquiler','',`<div class="mut">Aún no hay alquileres.</div>`);
-  const x=ls[Math.min(cq.a,ls.length-1)],h=+x.hr||0,p=+x.p||0;
-  return cxCard('∫ Total de un alquiler','El total es el área bajo la tarifa por hora entre 0 y las horas trabajadas.',
-  `<label>Alquiler</label>`+cxSel('a',ls.map(r=>fd(r.f)+' · '+r.maq+' · '+r.hr+' h · '+S(r.tot)),Math.min(cq.a,ls.length-1),"cq.a=this.value*1;render()"),
-  fxS('Integral definida — '+E(x.maq),[
-   ['Función (tarifa por hora)',`p(t) = ${N2(p)} &nbsp;[S/ por hora]`],
-   ['Integral definida de 0 a h',`T = ${INT('0','h','p(t)','t')} = ${INT('0',N2(h),N2(p),'t')}`],
-   ['Antiderivada (regla ∫k dt = k·t)',`F(t) = ${N2(p)}·t`],
-   ['Teorema fundamental: F(b) − F(a)',`T = F(${N2(h)}) − F(0)`],
-   ['Sustituyo y opero',`T = ${N2(p)}·${N2(h)} − ${N2(p)}·0 = ${N2(p*h)}`]],`T = ${S(p*h)}`),
-  cxOk(Math.abs(p*h-x.tot)<0.01,'Coincide con el total registrado del alquiler.'),
-  cxCap('p(t): el área sombreada (rectángulo) es el total del alquiler'),
-  cxArea([[0,0],[0,p],[h||1,p],[h||1,0]],{x0:0,x1:h||1,xt:[[0,'0'],[h||1,N2(h)+' h']],dl:pt=>'p = '+N2(p)}))}
+ acum:y=>{let s=0;return y.map(v=>s+=v)},                                   // integral acumulada (ritmo constante por día)
+ der:y=>y.length<2?y.map(()=>0):y.map((_,i)=>i==0?y[1]-y[0]:i==y.length-1?y[i]-y[i-1]:(y[i+1]-y[i-1])/2), // derivada: diferencias centrales
+ lin:(y,t)=>{if(y.length<2)return y[0]||0;const i=Math.max(0,Math.min(y.length-2,Math.floor(t)));return y[i]+(y[i+1]-y[i])*(t-i)}, // curva continua
+ izq:(f,a,b,n)=>{const h=(b-a)/n;let s=0;for(let i=0;i<n;i++)s+=f(a+i*h);return s*h},
+ der2:(f,a,b,n)=>{const h=(b-a)/n;let s=0;for(let i=1;i<=n;i++)s+=f(a+i*h);return s*h},
+ med:(f,a,b,n)=>{const h=(b-a)/n;let s=0;for(let i=0;i<n;i++)s+=f(a+(i+.5)*h);return s*h},
+ trap:(f,a,b,n)=>{const h=(b-a)/n;let s=(f(a)+f(b))/2;for(let i=1;i<n;i++)s+=f(a+i*h);return s*h},
+ simp:(f,a,b,n)=>{n+=n%2;const h=(b-a)/n;let s=f(a)+f(b);for(let i=1;i<n;i++)s+=f(a+i*h)*(i%2?4:2);return s*h/3}
 };
-const CXT=[['ventas','Ventas del mes'],['caja','Saldo de caja'],['asis','Horas trabajadas'],['stock','Stock'],['venta','Una venta'],['alq','Un alquiler']];
-V.calc=()=>`<div class="card"><h3>∫ Cálculo integral</h3><div class="mut" style="margin-bottom:8px">Todo se calcula con tus registros reales de ${mesN()}. Elige qué integral quieres ver desarrollada.</div><div class="row">${CXT.map(([k,n])=>`<button class="${cq.s==k?'on':''}" onclick="cq.s='${k}';render()">${n}</button>`).join('')}</div></div>${(()=>{try{return CALC[cq.s]()}catch(e){console.error('cálculo',e);return `<div class="card">No se pudo calcular: ${E(e.message)}</div>`}})()}`;
+const INT=(a,b)=>`<span class="fi">∫<i><span>${b}</span><span>${a}</span></i></span>`;
+const FR=(a,b)=>`<span class="ff"><span>${a}</span><span>${b}</span></span>`;
+const CL={ven:'#f5a524',cob:'#22c55e',gas:'#ef4444'},SN2={ven:'Vendido',cob:'Cobrado',gas:'Gastos'};
+const CC={s:'ven',a:0,b:-1,r:1,n:4,sp:0,sv:0,sg:0,mq:'',open:{},rk:[]},CR={};
+const dayKeys=()=>{const[y,m]=MES.split('-').map(Number),nd=new Date(y,m,0).getDate(),k=[];for(let i=1;i<=nd;i++)k.push(MES+'-'+String(i).padStart(2,'0'));return MES==MESACT()?k.filter(x=>x<=HOY):k};
+const SRC={ven:()=>[...D.ventas,...D.alq].filter(x=>!x.anu).map(x=>[x.f,x.tot]),cob:()=>cash().map(r=>[r.f,r.m]),gas:()=>[...D.gas,...D.mant,...D.poli,...D.com,...D.pagos].filter(x=>!x.anu).map(x=>[x.f,x.mon])};
+const cSer=(k,K)=>{const o={};SRC[k]().forEach(([f,m])=>o[f]=(o[f]||0)+m);return K.map(d=>o[d]||0)};
+const cAB=n=>{const b=CC.b<0?n-1:Math.min(n-1,CC.b);let a=Math.max(0,Math.min(n-1,CC.a));if(a>b)a=b;return[a,b]};
+const cLab=K=>K.map((k,i)=>[i,fd(k).slice(0,5)]).filter((_,i)=>K.length<=12||i%Math.ceil(K.length/10)==0);
+// ---- gráfico SVG (colores fijos para que también se vea en el PDF)
+function cPlot(Sr,o={}){const W=640,H=o.H||190,p=26,n=Math.max(...Sr.map(s=>s.y.length)),all=Sr.flatMap(s=>s.y),mn=Math.min(0,...all),mx=Math.max(1e-9,...all),X=i=>p+(n>1?i*(W-2*p)/(n-1):(W-2*p)/2),Y=v=>H-p-(v-mn)/((mx-mn)||1)*(H-2*p),z=Y(0);
+ let g=`<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block"><line x1="${p}" x2="${W-p}" y1="${z}" y2="${z}" stroke="#8b93a5" opacity=".5"/>`;
+ if(o.a!=null)g+=`<rect x="${X(o.a)-4}" y="6" width="${X(o.b)-X(o.a)+8}" height="${H-p-2}" fill="#38bdf8" opacity=".14"/>`;
+ if(o.bt){const[u,v]=o.bt;for(let i=0;i<n-1;i++){const pos=(u[i]-v[i]+u[i+1]-v[i+1])>=0;g+=`<polygon points="${X(i)},${Y(u[i])} ${X(i+1)},${Y(u[i+1])} ${X(i+1)},${Y(v[i+1])} ${X(i)},${Y(v[i])}" fill="${pos?'#22c55e':'#ef4444'}" opacity=".35"/>`}}
+ Sr.forEach(s=>{const pts=s.y.map((v,i)=>X(i)+','+Y(v)).join(' ');
+  if(s.t=='b'){const bw=Math.max(2,(W-2*p)/n*.7);s.y.forEach((v,i)=>g+=`<rect x="${X(i)-bw/2}" y="${Math.min(Y(v),z)}" width="${bw}" height="${Math.abs(Y(v)-z)}" fill="${s.c}" opacity="${o.a!=null&&!(i>=o.a&&i<=o.b)?.4:1}"/>`)}
+  else{if(s.t=='a')g+=`<polygon points="${X(0)},${z} ${pts} ${X(s.y.length-1)},${z}" fill="${s.c}" opacity=".3"/>`;g+=`<polyline fill="none" stroke="${s.c}" stroke-width="2.4" ${s.d?'stroke-dasharray="6 5"':''} points="${pts}"/>`}});
+ (o.lab||[]).forEach(([i,t])=>g+=`<text x="${X(i)}" y="${H-7}" font-size="11" fill="#8b93a5" text-anchor="middle">${t}</text>`);
+ return g+'</svg>'}
+// ---- panel ƒ(x): botón escondido con la fórmula y la operación del dato actual
+const fxHTML=r=>`<div class="ft">${r.t||''}</div>`+(r.bl||[]).map(b=>`<div class="fb"><span class="tg ${b.k=='I'?'i':'d'}">${b.k=='I'?'INTEGRAL':'DERIVADA'}</span><div class="fm">${b.f}</div>${b.o?`<div class="fo">Operación: <span class="fx">${b.o}</span></div>`:''}${b.r?`<div class="fr">= ${b.r}</div>`:''}${b.n?`<div class="fo">${b.n}</div>`:''}</div>`).join('');
+const cFx=k=>`<button type="button" class="fxb ${CC.open[k]?'on':''}" onclick="CC.open[${k}]=!CC.open[${k}];cFxU(${k})">ƒ(x) fórmula y operación</button><div class="fxp" id="fx_${k}" ${CC.open[k]?'':'hidden'}></div>`;
+const cFxU=k=>{const e=$('#fx_'+k);if(!e)return;e.hidden=!CC.open[k];e.previousElementSibling.classList.toggle('on',!!CC.open[k]);if(CC.open[k]&&CR[k])e.innerHTML=fxHTML(CR[k])};
+const cOut=(k,html,r,svg)=>{const e=$('#c_'+k);if(!e)return;CR[k]=r?{...r,svg}:null;e.innerHTML=html;cFxU(k)};
+const kpi=a=>`<div class="kp" style="margin-top:10px">${a.map(([t,v,c])=>`<div><small>${t}</small><b style="${c?'color:'+c:''}">${v}</b></div>`).join('')}</div>`;
+// ---- 1. Integral con límites que arrastras
+function cD1(){const K=dayKeys(),v=cSer(CC.s,K),n=v.length;if(!n)return cOut(1,'<div class="mut">Aún no hay días en este mes.</div>');
+ const[a,b]=cAB(n),T=b-a+1,I=sum(v.slice(a,b+1),x=>x),dv=CALC.der(v),Ci=CALC.acum(v),pv=b>0?Ci[b-1]:0,nm=SN2[CC.s],sv=cPlot([{y:v,c:CL[CC.s],t:'b'}],{a,b,lab:cLab(K)});
+ cOut(1,sv+kpi([[`∫ de ${fd(K[a])} a ${fd(K[b])}`,S(I)],['Promedio por día',S(I/T)],['Cambio v′(b)',(dv[b]>=0?'+':'−')+S(Math.abs(dv[b])),dv[b]>=0?'#22c55e':'#ef4444']]),
+ {t:`${nm}: del ${fd(K[a])} al ${fd(K[b])}`,bl:[
+  {k:'I',f:`${INT('a','b')} v(τ) dτ = Σ v(τ)·Δτ`,o:`Suma de ${T} día(s) con Δτ = 1 día`,r:S(I),n:`Promedio: ${S(I/T)} por día.`},
+  {k:'D',f:`${FR('dv','dτ')} ≈ ${FR('v(b+1) − v(b−1)','2Δτ')}`,o:b>0&&b<n-1?`(${S(v[b+1])} − ${S(v[b-1])}) ÷ 2`:'en el borde se usa la diferencia de un solo lado',r:`${S(dv[b])} por día²`,n:dv[b]>=0?'Ese día va subiendo.':'Ese día va bajando.'},
+  {k:'D',f:`${FR('d','dt')} ${INT('0','t')} v dτ = v(t)   (Teorema Fundamental)`,o:`C(b) − C(b−1) = ${S(Ci[b])} − ${S(pv)}`,r:`${S(Ci[b]-pv)} = v(b) ✔`}]},sv)}
+function cSl(k,v){const n=dayKeys().length;let[a,b]=cAB(n);if(k=='a'){a=+v;if(b<a)b=a}else{b=+v;if(a>b)a=b}CC.a=a;CC.b=b;$('#ca').value=a;$('#cb').value=b;cD1();cD8()}
+// ---- 2. Utilidad como área entre dos curvas
+function cD2(){const K=dayKeys(),n=K.length;if(!n)return cOut(2,'<div class="mut">Aún no hay días en este mes.</div>');
+ const ci=cSer('cob',K),ga=cSer('gas',K),C=CALC.acum(ci),G=CALC.acum(ga),Df=C.map((x,i)=>x-G[i]),U=Df[n-1],vd=sum(Df,x=>Math.max(0,x)),rj=sum(Df,x=>Math.max(0,-x)),mx=Df.indexOf(Math.max(...Df)),
+ sv=cPlot([{y:C,c:'#22c55e'},{y:G,c:'#ef4444'}],{bt:[C,G],lab:cLab(K)});
+ cOut(2,`<div class="mut"><span class="grn">■ Verde</span> = ganando · <span class="red">■ Rojo</span> = perdiendo (entre dinero cobrado acumulado y gastos acumulados)</div>`+sv+kpi([['Utilidad ∫(c − g)dt',S(U),U>=0?'#22c55e':'#ef4444'],['Área verde',n2(vd)+' S/·día'],['Área roja',n2(rj)+' S/·día'],['Mejor día acumulado',fd(K[mx])]]),
+ {t:`Utilidad del ${fd(K[0])} al ${fd(K[n-1])}`,bl:[
+  {k:'I',f:`U = ${INT('0','T')} [c(t) − g(t)] dt`,o:`${S(C[n-1])} cobrado − ${S(G[n-1])} gastado`,r:S(U)},
+  {k:'I',f:`Área entre curvas A = ${INT('0','T')} |C(t) − G(t)| dt`,o:`verde ${n2(vd)} + roja ${n2(rj)} (soles × día)`,r:`${n2(vd+rj)} S/·día`,n:'Mide cuánto tiempo y con cuánto margen estuviste ganando o perdiendo.'},
+  {k:'D',f:`${FR('dU','dt')} = c(t) − g(t)`,o:`${S(ci[n-1])} − ${S(ga[n-1])} (último día)`,r:`${S(ci[n-1]-ga[n-1])} por día`}]},sv)}
+// ---- 3. Equilibrio y rentabilidad por máquina
+const cMq=()=>[...new Set([...D.maq,...D.ral.map(x=>x.n)])];
+const cMd=m=>{const al=D.alq.filter(x=>!x.anu&&x.maq==m),gs=[...D.gas,...D.mant].filter(x=>!x.anu&&x.m==m),ing=sum(al,x=>x.tot),hr=sum(al,x=>x.hr),gt=sum(gs,x=>x.mon),co=+((D.cmaq||{})[m])||0;return{m,al,gs,ing,hr,gt,co,net:ing-gt,nh:hr?(ing-gt)/hr:0}};
+function cCosto(i,v){const m=CC.rk[i];D.cmaq=D.cmaq||{};D.cmaq[m]=Math.max(0,+v||0);act(async()=>{await api('cfg',{cfg:cfgObj()});toast('Costo guardado');cD3()})}
+function cD3(){const R=cMq().map(cMd).sort((x,y)=>y.net-x.net);CC.rk=R.map(r=>r.m);if(!CC.mq||!CC.rk.includes(CC.mq))CC.mq=(R.find(r=>r.hr)||R[0]||{}).m||'';
+ const r=R.find(x=>x.m==CC.mq);if(!r)return cOut(3,'<div class="mut">No hay máquinas registradas.</div>');
+ const tb=`<div class="wrap"><table><tr><th>#</th><th>Máquina</th><th>Horas</th><th>Ingreso</th><th>Gastos</th><th>Neto</th><th>Neto/hora</th><th>Costo de compra S/</th></tr>${R.map((x,i)=>`<tr style="cursor:pointer;${x.m==CC.mq?'background:#f5a52422':''}" onclick="CC.mq=CC.rk[${i}];cD3()"><td>${i+1}</td><td><b>${E(x.m)}</b></td><td class="mn">${n2(x.hr)}</td><td class="mn">${S(x.ing)}</td><td class="mn">${S(x.gt)}</td><td class="mn ${x.net<0?'red':'grn'}">${S(x.net)}</td><td class="mn">${x.hr?S(x.nh):'—'}</td><td><input type="number" step="0.01" style="max-width:130px;padding:6px" value="${x.co||''}" placeholder="S/" onclick="event.stopPropagation()" onchange="cCosto(${i},this.value)"></td></tr>`).join('')}</table></div>`;
+ const mg=r.hr?(r.ing-r.gt)/r.hr:0,Ts=mg>0&&r.co>0?r.co/mg:null,falta=Ts==null?null:Math.max(0,Ts-r.hr);
+ const ds=[...new Set([...r.al,...r.gs].map(x=>x.f))].sort();let sv='';
+ if(ds.length>=2){const I=ds.map(d=>sum(r.al.filter(x=>x.f<=d),x=>x.tot)),Ec=ds.map(d=>r.co+sum(r.gs.filter(x=>x.f<=d),x=>x.mon));sv=cPlot([{y:I,c:'#22c55e'},{y:Ec,c:'#ef4444'}],{bt:[I,Ec],lab:[[0,fd(ds[0]).slice(0,5)],[ds.length-1,fd(ds[ds.length-1]).slice(0,5)]]})}
+ const msg=!r.hr?'Esta máquina no tiene alquileres: el ingreso se mide solo por alquiler.':!r.co?'Escribe el costo de compra en la tabla para calcular el equilibrio.':mg<=0?'Con los gastos actuales todavía no deja margen por hora.':falta>0?`Le faltan <b>${n2(falta)} h</b> de trabajo para pagarse sola (equilibrio en ${n2(Ts)} h).`:`✔ Ya se pagó sola (equilibrio en ${n2(Ts)} h, lleva ${n2(r.hr)} h).`;
+ cOut(3,`<div class="mut">Toca una fila para ver su gráfica. Ingreso = alquileres de esa máquina; gastos = petróleo + mantenimiento. Todo el historial.</div>${tb}<h3 style="margin-top:12px">${E(r.m)}</h3><div class="mut"><span class="grn">■ Verde</span> ingreso acumulado · <span class="red">■ Rojo</span> costo + gastos acumulados</div>${sv}${kpi([['Horas trabajadas',n2(r.hr)],['Margen por hora',r.hr?S(mg):'—'],['Equilibrio T*',Ts==null?'—':n2(Ts)+' h'],['Le faltan',falta==null?'—':n2(falta)+' h']])}<div style="margin-top:8px">${msg}</div>`,
+ {t:`Máquina: ${E(r.m)}`,bl:[
+  {k:'I',f:`${INT('0','T*')} ingreso dt = Costo + ${INT('0','T*')} gastos dt`,o:`${S(r.ing)}/${n2(r.hr)} h − ${S(r.gt)}/${n2(r.hr)} h = ${S(mg)} por hora  ⇒  T* = ${S(r.co)} ÷ ${S(mg)}`,r:Ts==null?'sin datos suficientes':n2(Ts)+' horas',n:falta==null?'':falta>0?`Faltan ${n2(falta)} h.`:'Ya se pagó sola.'},
+  {k:'I',f:`Neto = ${INT('0','T')} (ingreso − gasto) dt`,o:`${S(r.ing)} − ${S(r.gt)}`,r:S(r.net)},
+  {k:'D',f:`${FR('d(Neto)','dT')} = margen por hora`,o:`${S(r.net)} ÷ ${n2(r.hr)} h`,r:r.hr?S(mg)+' por hora':'—'}]},sv)}
+// ---- 4. Simulador ¿qué pasa si…?
+function cD4(){const K=dayKeys(),d=K.length,nd=+ult(MES).slice(8),e=$('#c_4');if(!e||!d)return cOut(4,'<div class="mut">Aún no hay días en este mes.</div>');
+ const ci=cSer('cob',K),ga=cSer('gas',K),C=sum(ci,x=>x),G=sum(ga,x=>x),cb=C/d,gb=G/d,kk=(1+CC.sp/100)*(1+CC.sv/100),ch=cb*kk,gh=gb*(1+CC.sg/100),rest=nd-d,Ub=C-G+(cb-gb)*rest,Ue=C-G+(ch-gh)*rest,U0=C-G;
+ const sg=x=>(x>=0?'+':'')+x+'%';['sp','sv','sg'].forEach(k=>{const s=$('#c'+k);if(s)s.textContent=sg(CC[k])});
+ const U=CALC.acum(ci.map((x,i)=>x-ga[i])),pr=(r)=>Array.from({length:nd},(_,i)=>i<d?U[i]:U[d-1]+r*(i-d+1)),yb=pr(cb-gb),ye=pr(ch-gh);
+ const sv=cPlot([{y:yb,c:'#8b93a5',d:1},{y:ye,c:'#f5a524'}],{lab:cLab(Array.from({length:nd},(_,i)=>MES+'-'+String(i+1).padStart(2,'0')))});
+ cOut(4,(MES==MESACT()?'':'<div class="mut">Mes terminado: no queda nada por proyectar. Elige el mes actual arriba.</div>')+sv+kpi([['Utilidad hoy',S(U0)],['Fin de mes (ritmo actual)',S(Ub)],['Fin de mes (tu escenario)',S(Ue),Ue>=Ub?'#22c55e':'#ef4444'],['Diferencia',(Ue-Ub>=0?'+':'−')+S(Math.abs(Ue-Ub))]])+'<div class="mut" style="margin-top:6px">Línea gris = ritmo actual · línea naranja = tu escenario. Es una estimación: supone que cada día repite el promedio de lo que va del mes.</div>',
+ {t:`Proyección a fin de ${mesN()} (faltan ${rest} días)`,bl:[
+  {k:'I',f:`U<sub>fin</sub> = U(hoy) + ${INT('hoy','fin')} [ĉ − ĝ] dt`,o:`${S(U0)} + (${S(ch)} − ${S(gh)}) × ${rest} días`,r:S(Ue),n:`ĉ = cobrado/día × (1${sg(CC.sp)})(1${sg(CC.sv)}) ; ĝ = gasto/día × (1${sg(CC.sg)})`},
+  {k:'D',f:`${FR('dU','dt')} = ĉ − ĝ`,o:`${S(ch)} − ${S(gh)}`,r:`${S(ch-gh)} por día`,n:`Con el ritmo actual sería ${S(cb-gb)} por día.`}]},sv)}
+// ---- 5. Día en que se acaba el material
+function cD5(){const a=addD(HOY,-14),R=stockOf().map(r=>{const ing=sum(D.stk.filter(x=>!x.anu&&x.mat==r.n&&x.f>a&&x.f<=HOY),x=>(x.sg<0?-1:1)*x.m3),ven=sum(D.ventas.filter(x=>!x.anu&&x.mat==r.n&&x.f>a&&x.f<=HOY),m3v),d=(ing-ven)/14;return{...r,d,ing,ven,dias:r.m3<=0?0:d<0?r.m3/-d:Infinity}}).filter(r=>r.ing||r.ven||r.m3).sort((x,y)=>x.dias-y.dias);
+ if(!R.length)return cOut(5,'<div class="mut">Aún no hay movimiento de stock.</div>');
+ const sem=x=>x.dias<=7?'🔴':x.dias<=14?'🟡':'🟢',r0=R[0];
+ cOut(5,`<div class="wrap"><table><tr><th></th><th>Material</th><th>Stock</th><th>dS/dt (14 d)</th><th>Se acaba en</th><th>Fecha</th></tr>${R.map(x=>`<tr><td>${sem(x)}</td><td><b>${E(x.n)}</b></td><td class="mn">${n2(x.m3)} m³</td><td class="mn ${x.d<0?'red':'grn'}">${x.d>=0?'+':'−'}${n2(Math.abs(x.d))} m³/día</td><td class="mn">${x.m3<=0?'<span class="red">Agotado</span>':isFinite(x.dias)?n2(x.dias)+' días':'No baja'}</td><td>${x.m3>0&&isFinite(x.dias)?fd(addD(HOY,Math.ceil(x.dias))):'—'}</td></tr>`).join('')}</table></div><div class="mut" style="margin-top:6px">🔴 menos de 7 días · 🟡 menos de 14 · 🟢 alcanza o no está bajando</div>`,
+ {t:`Material más urgente: ${E(r0.n)}`,bl:[
+  {k:'D',f:`${FR('dS','dt')} ≈ ${FR('ingresos − ventas','14 días')}`,o:`(${n2(r0.ing)} − ${n2(r0.ven)}) m³ ÷ 14`,r:`${n2(r0.d)} m³ por día`},
+  {k:'I',f:`S₀ + ${INT('0','t*')} (entra − sale) dτ = 0  ⇒  t* = −S₀ ÷ (dS/dt)`,o:`${n2(r0.m3)} + (${n2(r0.d)})·t* = 0`,r:r0.m3<=0?'ya está agotado':isFinite(r0.dias)?`t* = ${n2(r0.dias)} días (${fd(addD(HOY,Math.ceil(r0.dias)))})`:'no baja: no se acaba'}]},'')}
+// ---- 6. Costo de fiar
+function cD6(){const K=dayKeys(),n=K.length;if(!n)return cOut(6,'<div class="mut">Aún no hay días en este mes.</div>');
+ const rd=CC.r/100/30,rec=[...D.ventas,...D.alq].filter(x=>!x.anu&&x.est=='Fiado'),
+ Dd=K.map(d=>sum(rec.filter(x=>x.f<=d),x=>x.cob&&!hasAbo(x)?0:Math.max(0,x.tot-sum(D.abo.filter(a=>!a.anu&&a.ref==x.id&&a.f<=d),a=>a.mon)))),
+ ID=sum(Dd,x=>x),costo=ID*rd,sv=cPlot([{y:Dd,c:'#a78bfa',t:'a'}],{lab:cLab(K)});
+ cOut(6,sv+kpi([['Deuda hoy',S(Dd[n-1])],['Deuda promedio',S(ID/n)],['∫D(t)dt',n2(ID)+' S/·día'],['Costo de fiar',S(costo),'#ef4444']])+`<div class="mut" style="margin-top:6px">Convierte “te deben ${S(Dd[n-1])}” en “fiar te costó ${S(costo)} este mes” (con ${CC.r}% mensual).</div>`,
+ {t:`Costo de financiar a clientes · ${mesN()}`,bl:[
+  {k:'I',f:`Costo = ${INT('0','T')} D(t)·r dt`,o:`${n2(ID)} S/·día × ${CC.r}% ÷ 30 por día`,r:S(costo)},
+  {k:'I',f:`D̄ = ${FR('1','T')} ${INT('0','T')} D(t) dt`,o:`${n2(ID)} ÷ ${n} días`,r:S(ID/n)},
+  {k:'D',f:`${FR('dD','dt')} ≈ D(hoy) − D(ayer)`,o:`${S(Dd[n-1])} − ${S(Dd[Math.max(0,n-2)])}`,r:`${S(Dd[n-1]-Dd[Math.max(0,n-2)])} por día`,n:'Positivo = la deuda crece; negativo = te están pagando.'}]},sv)}
+// ---- 7. Horas-hombre por hora del día
+function cD7(){const rec=D.asis.filter(x=>x.f.startsWith(MES)&&x.e&&x.s),H=Array(24).fill(0),tm=t=>{const[h,m,s]=String(t).split(':');return(+h)+(+m||0)/60+(+s||0)/3600};
+ rec.forEach(x=>{const e=tm(x.e);let s=tm(x.s);if(s<e)s+=24;for(let h=0;h<48;h++){const o=Math.max(0,Math.min(s,h+1)-Math.max(e,h));if(o>0)H[h%24]+=o}});
+ const V=Array(24).fill(0);D.ventas.filter(x=>!x.anu&&x.f.startsWith(MES)&&x.h).forEach(x=>V[+String(x.h).slice(0,2)]++);
+ const tot=sum(H,x=>x),pk=H.indexOf(Math.max(...H)),pv=V.indexOf(Math.max(...V)),mh=Math.max(...H,1e-9),mv=Math.max(...V,1e-9),Vs=V.map(x=>x/mv*mh),dN=CALC.der(H);
+ if(!tot)return cOut(7,'<div class="mut">Aún no hay asistencias completas (con entrada y salida) este mes.</div>');
+ const sv=cPlot([{y:H,c:'#38bdf8',t:'b'},{y:Vs,c:'#f5a524'}],{lab:H.map((_,i)=>[i,i]).filter(([i])=>i%2==0)}),hh=h=>String(h).padStart(2,'0')+':00';
+ cOut(7,`<div class="mut"><span style="color:#38bdf8">■ Barras</span> horas-hombre por hora del día · <span class="org">— Línea</span> cantidad de ventas (escala relativa)</div>${sv}${kpi([['Horas-hombre ∫N dt',n2(tot)+' h'],['Hora con más gente',hh(pk)],['Hora con más ventas',V[pv]?hh(pv):'—'],['Asistencias usadas',rec.length]])}`,
+ {t:`Horas-hombre de ${mesN()}`,bl:[
+  {k:'I',f:`H = ${INT('0','24')} N(t) dt = Σ N(t)·Δt`,o:`suma de las 24 horas del día (Δt = 1 h) sobre ${rec.length} asistencias`,r:`${n2(tot)} horas-hombre`},
+  {k:'D',f:`${FR('dN','dt')} ≈ ${FR('N(h+1) − N(h−1)','2Δt')}`,o:`en la hora pico ${hh(pk)}: (${n2(H[Math.min(23,pk+1)])} − ${n2(H[Math.max(0,pk-1)])}) ÷ 2`,r:`${n2(dN[pk])} h-h por hora`,n:'Cerca de cero en el pico: ahí la curva deja de subir y empieza a bajar.'}]},sv)}
+// ---- 8. Riemann animado y comparador de métodos
+function cPlay(){if(cTm){clearInterval(cTm);cTm=null;$('#cpb').textContent='▶ Animar';return}CC.n=1;$('#cpb').textContent='⏸ Pausar';cTm=setInterval(()=>{if(CC.n>=64||tab!='calc'||!$('#cn')){clearInterval(cTm);cTm=null;const b=$('#cpb');if(b)b.textContent='▶ Animar';return}CC.n++;$('#cn').value=CC.n;cD8()},260)}
+let cTm=null;
+function cD8(){const K=dayKeys(),v=cSer(CC.s,K),n0=v.length;if(!n0)return cOut(8,'<div class="mut">Aún no hay días en este mes.</div>');
+ const[a,b]=cAB(n0);if(b-a<1)return cOut(8,'<div class="mut">Separa los límites a y b en la sección 1 (mueve los deslizadores) para comparar métodos.</div>');
+ const f=t=>CALC.lin(v,t),N=Math.max(1,CC.n),ref=CALC.trap(f,a,b,4000),h=(b-a)/N,Mt=[['Riemann izquierda',CALC.izq],['Riemann derecha',CALC.der2],['Punto medio',CALC.med],['Trapecio',CALC.trap],['Simpson',CALC.simp]].map(([nm,fn])=>{const r=fn(f,a,b,N);return[nm,r,Math.abs(r-ref)]});
+ const W=640,H=190,p=24,xs=t=>p+(t-a)/(b-a)*(W-2*p),mx=Math.max(1e-9,...v.slice(a,b+1)),ys=y=>H-p-y/mx*(H-2*p);
+ let g=`<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block">`;
+ for(let i=0;i<N;i++){const x0=a+i*h,y0=ys(f(x0));g+=`<rect x="${xs(x0)}" y="${y0}" width="${Math.max(.5,xs(x0+h)-xs(x0))}" height="${Math.max(0,H-p-y0)}" fill="#38bdf8" opacity=".35" stroke="#38bdf8"/>`}
+ let pts='';for(let i=0;i<=200;i++){const t=a+(b-a)*i/200;pts+=xs(t)+','+ys(f(t))+' '}
+ g+=`<polyline fill="none" stroke="${CL[CC.s]}" stroke-width="2.6" points="${pts}"/><text x="${p}" y="${H-6}" font-size="11" fill="#8b93a5">${fd(K[a])}</text><text x="${W-p}" y="${H-6}" font-size="11" fill="#8b93a5" text-anchor="end">${fd(K[b])}</text></svg>`;
+ const rows=Mt.map(([nm,r,er])=>`<tr><td><b>${nm}</b></td><td class="mn">${n2(r)}</td><td class="mn ${er<.01*Math.abs(ref)?'grn':er<.05*Math.abs(ref)?'org':'red'}">${n2(er)} (${ref?n2(er/Math.abs(ref)*100):0}%)</td></tr>`).join('');
+ cOut(8,g+`<div class="wrap" style="margin-top:8px"><table><tr><th>Método (n = ${N})</th><th>Resultado</th><th>Error</th></tr>${rows}<tr><td><b>Referencia (4000 trapecios)</b></td><td class="mn">${n2(ref)}</td><td></td></tr></table></div><div class="mut" style="margin-top:6px">Curva = tus datos unidos con rectas. Mientras más rectángulos (n), más se acerca la suma al valor real: eso es el límite que define la integral.</div>`,
+ {t:`${SN2[CC.s]} de ${fd(K[a])} a ${fd(K[b])} con n = ${N}`,bl:[
+  {k:'I',f:`${INT('a','b')} f dx = lím<sub>n→∞</sub> Σ f(xᵢ)·Δx,  Δx = (b − a) ÷ n`,o:`Δx = (${b} − ${a}) ÷ ${N} = ${n2(h)}  ⇒  izquierda = ${n2(Mt[0][1])}`,r:`error ${n2(Mt[0][2])} frente a ${n2(ref)}`},
+  {k:'I',f:`Simpson: ${FR('Δx','3')} [f₀ + 4f₁ + 2f₂ + … + fₙ]`,o:`con n = ${N+N%2} subintervalos`,r:`${n2(Mt[4][1])}  (error ${n2(Mt[4][2])})`,n:'Simpson y trapecio suelen ser mucho más exactos que Riemann con el mismo n.'}]},g)}
+function cAll(){if(!$('#c_1'))return;[cD1,cD2,cD3,cD4,cD5,cD6,cD7,cD8].forEach(f=>{try{f()}catch(e){console.error(e)}})}
+// ---- página
+V.calc=function(){const n=dayKeys().length,[a,b]=cAB(n),sec=(k,ti,sub,ctl)=>`<div class="card"><h3>${ti}</h3><div class="mut">${sub}</div>${ctl||''}<div id="c_${k}" style="margin-top:8px"></div>${cFx(k)}</div>`,
+ sl=(id,l,k,mn,mx,val,fn)=>`<label>${l}</label><input type="range" id="${id}" min="${mn}" max="${mx}" value="${val}" oninput="${fn}">`;
+ return `<div class="card" style="border-color:var(--ac)"><h3>∫ Cálculo aplicado a tu negocio</h3><div class="mut">Integrales y derivadas con tus ventas, gastos, stock, deudas y asistencia reales de <b>${mesN()}</b> (el equilibrio usa todo el historial). Cada sección tiene un botón <b>ƒ(x)</b> escondido que muestra la fórmula y la operación con tus números actuales, y se actualiza solo.</div><button class="pri" onclick="act(cPdf)">📄 INFORME DE CÁLCULO (PDF)</button></div>`+
+ sec(1,'1 · Integral con límites que arrastras','Mueve a y b: la zona sombreada es el área y debajo se recalcula ∫ₐᵇ v(τ)dτ.',`<div class="row" style="margin-top:8px">${Object.entries(SN2).map(([k,t])=>`<button class="sm ${CC.s==k?'on':''}" onclick="CC.s='${k}';render()">${t}</button>`).join('')}</div>${sl('ca','Día inicial (a)','a',0,Math.max(0,n-1),a,"cSl('a',this.value)")}${sl('cb','Día final (b)','b',0,Math.max(0,n-1),b,"cSl('b',this.value)")}`)+
+ sec(2,'2 · Utilidad como área entre dos curvas','Cobrado acumulado contra gastos acumulados: lo que queda entre las dos curvas es la utilidad.')+
+ sec(3,'3 · Punto de equilibrio y rentabilidad por máquina','¿En cuántas horas se paga sola cada máquina? Ranking de ∫ingresos − ∫gastos.')+
+ sec(4,'4 · Simulador “¿qué pasa si…?”','Mueve los deslizadores y mira cómo cambia la utilidad proyectada a fin de mes.',`${sl('csp','','',-50,50,CC.sp,"CC.sp=+this.value;cD4()").replace('<label></label>','<label>Cambio de precio: <b id="csp">'+CC.sp+'%</b></label>')}${sl('csv','','',-50,50,CC.sv,"CC.sv=+this.value;cD4()").replace('<label></label>','<label>Cambio de ventas por día: <b id="csv">'+CC.sv+'%</b></label>')}${sl('csg','','',-50,50,CC.sg,"CC.sg=+this.value;cD4()").replace('<label></label>','<label>Cambio de gastos por día: <b id="csg">'+CC.sg+'%</b></label>')}`)+
+ sec(5,'5 · Día en que se acaba el material','Se resuelve S₀ + ∫(entra − sale)dτ = 0 para cada material, con semáforo.')+
+ sec(6,'6 · Costo de fiar','∫D(t)·r dt: cuánto te cuesta tener plata prestada a clientes.',`<label>Interés mensual que quieres considerar (%)</label><input type="number" step="0.1" min="0" value="${CC.r}" oninput="CC.r=+this.value||0;cD6()">`)+
+ sec(7,'7 · Horas-hombre por hora del día','N(t) = trabajadores presentes; el área es el total de horas-hombre ∫N(t)dt, comparado con las ventas.')+
+ sec(8,'8 · Riemann animado y comparador de métodos','Usa la serie y los límites a y b de la sección 1. Más rectángulos = más exactitud.',`<div class="row" style="margin-top:8px;align-items:end"><div><label>Rectángulos (n)</label><input type="range" id="cn" min="1" max="100" value="${CC.n}" oninput="CC.n=+this.value;cD8()"></div><button id="cpb" class="sm" style="flex:0 0 auto" onclick="cPlay()">▶ Animar</button></div>`)};
+// ---- informe PDF con todo desarrollado
+async function cPdf(){const w=window.open('','_blank');if(!w)return toast('Permite las ventanas emergentes para ver el informe',1);
+ cAll();const T=[[1,'Integral con límites ajustables'],[2,'Utilidad como área entre dos curvas'],[3,'Punto de equilibrio y rentabilidad por máquina'],[4,'Simulador ¿qué pasa si…?'],[5,'Día en que se acaba el material'],[6,'Costo de fiar'],[7,'Horas-hombre por hora del día'],[8,'Comparador de métodos numéricos']];
+ const css='@page{size:A4;margin:12mm}*{box-sizing:border-box}body{font:12px Arial,sans-serif;color:#111;margin:0}h1{font-size:20px;border-bottom:3px solid #f5a524;padding-bottom:6px}h2{font-size:15px;margin:18px 0 4px;color:#b45309}.s{page-break-inside:avoid;border:1px solid #ddd;border-radius:8px;padding:10px;margin:10px 0}.ft{font-weight:700;margin-bottom:6px}.fb{border-top:1px dashed #ccc;padding:6px 0}.tg{font-size:10px;font-weight:800;padding:1px 7px;border-radius:8px;margin-right:6px}.tg.i{background:#dbeafe;color:#1d4ed8}.tg.d{background:#ede9fe;color:#6d28d9}.fm{font:15px Cambria,Georgia,serif;margin:4px 0}.fo{color:#555}.fr{font-weight:700;color:#15803d}.fi{display:inline-flex;align-items:center;font-size:1.5em;line-height:1}.fi i{display:inline-flex;flex-direction:column;font-style:normal;font-size:.45em;line-height:1.1}.ff{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 3px;font-size:.9em}.ff>span:first-child{border-bottom:1px solid #111;padding:0 3px}.fm sub{font-size:.7em}.fx{color:#111}.np{margin-bottom:10px}';
+ const body=T.map(([k,t])=>CR[k]?`<h2>${k}. ${t}</h2><div class="s">${CR[k].svg?`<div style="max-width:620px">${CR[k].svg}</div>`:''}${fxHTML(CR[k])}</div>`:'').join('');
+ w.document.open();w.document.write(`<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><title>Informe de cálculo ${MES}</title><style>${css}</style></head><body><div class="np"><button onclick="print()" style="font-size:15px;padding:8px 16px">🖨 Imprimir / Guardar como PDF</button></div><h1>INFORME DE CÁLCULO — ${E(empT())}</h1><p>Periodo: <b>${E(mesN())}</b> · Generado: ${new Date().toLocaleString('es-PE',{timeZone:'America/Lima'})}<br>Integrales y derivadas calculadas con los registros reales del sistema. Fórmulas, sustituciones y resultados.</p>${body}<script>addEventListener('load',()=>setTimeout(print,600))<\/script></body></html>`);w.document.close()}
 
 load().catch(()=>showLogin());
 </script>
